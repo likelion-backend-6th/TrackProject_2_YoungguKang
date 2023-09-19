@@ -11,22 +11,22 @@ Python: 3.9.13
 
 라이브러리
 
-Django: 4.2.5
-djangorestframework: 3.14.0
-drf-spectacular: 0.26.4
-psycopg2-binary: 2.9.7
-gunicorn: 21.2.0
+Django: 4.2.5 <br>
+djangorestframework: 3.14.0 <br>
+drf-spectacular: 0.26.4 <br>
+psycopg2-binary: 2.9.7<br>
+gunicorn: 21.2.0<br>
 
 클라우드
 
-backend-server: ubuntu 20.04
-db-server: ubuntu 20.04
+backend-server: ubuntu 20.04<br>
+db-server: ubuntu 20.04<br>
 
 도커
 
-Docker: 24.0.2
-backend-image: python-3.11-alpine
-db-image: postgresql-13
+Docker: 24.0.2<br>
+backend-image: python-3.11-alpine<br>
+db-image: postgresql-13<br>
 
 
 
