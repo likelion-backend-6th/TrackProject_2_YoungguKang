@@ -19,16 +19,6 @@ terraform {
     default = "production"
   }
 
-  provider "null" {
-    required_providers {
-      ncloud = "~> 4.8.0"
-    }
-  }
-
-  provider "ncloud" {
-    region = var.region
-    stage  = var.stage
-  }
 
   module "vpc" {
     source = "./modules/vpc"

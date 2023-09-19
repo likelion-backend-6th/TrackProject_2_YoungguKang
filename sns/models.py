@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 from rest_framework import serializers
+from rest_framework.response import Response
 
 
 class Follow(models.Model):
@@ -17,6 +18,7 @@ class Follow(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
+# 전체 유저 목록을 불러올 때, follow여부 확인
 class FollowSerializer(serializers.ModelSerializer):
     following = serializers.SerializerMethodField()
 
@@ -31,18 +33,6 @@ class FollowSerializer(serializers.ModelSerializer):
             "follower",
             "following",
         )
-
-
-class FollowsViewSet(viewsets.ModelViewSet):
-    queryset = Follow.objects.all()
-    serializer_class = FollowSerializer
-
-
-# GET /api/follows
-def follows_list(request):
-    follows = Follow.objects.all()
-    serializer = FollowSerializer(follows, many=True)
-    return Response(serializer.data)
 
 
 class Post(models.Model):
@@ -71,7 +61,6 @@ class PostSerializer(serializers.ModelSerializer):
         )
 
 
-# POST /api/posts
 def posts_create(request):
     data = request.data
     data["author"] = request.user.id
@@ -81,7 +70,6 @@ def posts_create(request):
     return Response(serializer.data)
 
 
-# PUT /api/posts/<post_id>
 def posts_update(request, post_id):
     post = Post.objects.get(id=post_id)
     data = request.data
