@@ -1,7 +1,8 @@
 from django.test import TestCase
-
-from posts.models import Post
-from posts.views import PostsView
+from django.contrib.auth.models import User
+from .models import Post, Follow
+from django.urls import reverse
+from rest_framework.status import status
 
 
 class PostsViewTest(TestCase):
@@ -66,3 +67,42 @@ class PostsViewTest(TestCase):
         # 게시글이 삭제되었는지 확인합니다.
         post.refresh_from_db()
         self.assertFalse(post.exists())
+
+    def test_follow_unfollow(self):
+        # call follow api
+        self.client.force_login(self.user)
+        response = self.client.post(reverse("follow"), {"following": self.user2.id})
+        # check response
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(
+            Follow.objects.filter(follower=self.user, following=self.user2).exists()
+        )
+
+        # call unfollow api
+        self.client.force_login(self.user)
+        response = self.client.post(reverse("follow"), {"following": self.user2.id})
+        # check response
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(
+            Follow.objects.filter(follower=self.user, following=self.user2).exists()
+        )
+
+    def test_get_following_posts(self):
+        user3 = User.objects.create_user(username="user3")
+        unfollowing_user = User.objects.create_user(username="unfollowing")
+        # follow user2 and user3
+        Follow.objects.create(follower=self.user, following=self.user2)
+        Follow.objects.create(follower=self.user, following=user3)
+        # create some posts
+        post_n = 5
+        for i in range(post_n):
+            Post.objects.create(user=self.user, content=f"test{i}")
+            Post.objects.create(user=self.user2, content=f"test{i}")
+            Post.objects.create(user=user3, content=f"test{i}")
+            Post.objects.create(user=unfollowing_user, content=f"test{i}")
+        # call get list api
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("feed"))
+        # check response
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), post_n * 2)

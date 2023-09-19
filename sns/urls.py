@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from follows import views as follows_views
-from posts import views as posts_views
+from sns import views as follows_views
+from sns import views as posts_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
