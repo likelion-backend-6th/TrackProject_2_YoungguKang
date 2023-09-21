@@ -108,3 +108,4 @@ db-image: postgresql-13<br>
 - [x] 백엔드 서버와 DB 서버를 물리적으로 분리
 
 ---
+1
