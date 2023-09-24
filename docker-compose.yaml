@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  sns-app:
+    container_name: sns-app
+    depends_on:
+      - db
+    build:
+      context: sns_app
+      dockerfile: dockerfile
+    image: sns-app
+    ports:
+      - "8000:8000"
+    volumes:
+      - "staticfiles:/var/www/html/static"
+      - ./sns_app:/app
+    command:
+      - "/start"
+    env_file:
+      - ./.envs/local
+
+  nginx:
+    restart: always
+    depends_on:
+      - sns-app
+    container_name: sns-nginx
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx_ubt
+    image: sns-nginx
+    ports:
+      - "8888:80"
+    volumes:
+      - "staticfiles:/var/www/html/static"
+    env_file:
+      - ./.envs/local
+
+  db:
+    container_name: sns-db
+    image: postgres:13
+    env_file:
+      - ./.envs/local
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+  staticfiles:
